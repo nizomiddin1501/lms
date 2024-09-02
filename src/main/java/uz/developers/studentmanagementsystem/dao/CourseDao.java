@@ -2,6 +2,8 @@ package uz.developers.studentmanagementsystem.dao;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import uz.developers.studentmanagementsystem.entity.Course;
+import uz.developers.studentmanagementsystem.entity.Faculty;
 import uz.developers.studentmanagementsystem.entity.Result;
 import uz.developers.studentmanagementsystem.entity.Teacher;
 
@@ -30,34 +32,24 @@ public class CourseDao {
 
 
     //create
-    public Result addTeacher(Teacher teacher, String subjectName) {
+    public Result addCourse(Course course, String facultyName, String subjectName) {
         int count = 0;
         try {
-            String checkEmailQuery = "select count(*) from teacher where email='" + teacher.getEmail() + "'";
-            preparedStatement = this.connection.prepareStatement(checkEmailQuery);
-            resultSet = preparedStatement.executeQuery();
-            while (resultSet.next()) {
-                count = resultSet.getInt(1);
-            }
-            if (count > 0) {
-                return new Result("Email already exist", false);
-            }
+            Long facultyId = getFacultyIdByName(facultyName);
             Long subjectId = getSubjectIdByName(subjectName);
 
             if (subjectId != null) {
-                String sqlQuery = "insert into teacher(firstname, lastname, email, gender, password, photo, subject_id) values (?,?,?,?,?,?,?)";
+                String sqlQuery = "insert into course(name, description, credits, faculty_id, subject_id) values (?,?,?,?,?)";
                 preparedStatement = connection.prepareStatement(sqlQuery);
-                preparedStatement.setString(1, teacher.getFirstname());
-                preparedStatement.setString(2, teacher.getLastname());
-                preparedStatement.setString(3, teacher.getEmail());
-                preparedStatement.setString(4, teacher.getGender());
-                preparedStatement.setString(5, teacher.getPassword());
-                preparedStatement.setString(6, teacher.getPhoto());
-                preparedStatement.setLong(7,subjectId);
+                preparedStatement.setString(1, course.getName());
+                preparedStatement.setString(2, course.getDescription());
+                preparedStatement.setInt(3, course.getCredits());
+                preparedStatement.setLong(4,facultyId);
+                preparedStatement.setLong(5,subjectId);
                 preparedStatement.executeUpdate();
                 return new Result("Successfully added", true);
             } else {
-                return new Result("Subject not found!", false);
+                return new Result("Course not found!", false);
             }
         } catch (SQLException throwables) {
             throwables.printStackTrace();
@@ -66,7 +58,27 @@ public class CourseDao {
     }
 
 
-    //subject name by subject_id for add teacher
+    //faculty name by faculty_id for add course
+
+    public Long getFacultyIdByName(String facultyName) {
+        Long facultyId = null;
+        facultyName = facultyName.substring(0, 1).toUpperCase() + facultyName.substring(1).toLowerCase();
+        try {
+            String selectQuery = "select id from faculty where name = ?;";
+            preparedStatement = connection.prepareStatement(selectQuery);
+            preparedStatement.setString(1, facultyName);
+            resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                facultyId = resultSet.getLong("id");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return facultyId;
+    }
+
+
+    //subject name by subject_id for add course
 
     public Long getSubjectIdByName(String subjectName) {
         Long subjectId = null;
@@ -85,117 +97,108 @@ public class CourseDao {
         return subjectId;
     }
 
+
+
     //read
 
-    public List<Teacher> getTeachers() {
-        List<Teacher> teachers = new ArrayList<>();
+    public List<Course> getCourses() {
+        List<Course> courses = new ArrayList<>();
         try {
-            String selectQuery = "select teacher.id, teacher.firstname, teacher.lastname, teacher.email, teacher.gender, teacher.photo, subject.name as subjectName " +
-                    "from teacher inner join subject on subject.id = teacher.subject_id;";
+            String selectQuery = "select c.id, c.name, c.description, c.credits, f.name as facultyName, s.name as subjectName " +
+                    "from course as c inner join faculty f on c.faculty_id = f.id inner join subject s on c.subject_id = s.id;";
             preparedStatement = this.connection.prepareStatement(selectQuery);
             resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
                 long id = resultSet.getLong("id");
-                String firstname = resultSet.getString("firstname");
-                String lastname = resultSet.getString("lastname");
-                String email = resultSet.getString("email");
-                String gender = resultSet.getString("gender");
-                String photo = resultSet.getString("photo");
+                String name = resultSet.getString("name");
+                String description = resultSet.getString("description");
+                int credits = resultSet.getInt("credits");
+                String facultyName = resultSet.getString("facultyName");
                 String subjectName = resultSet.getString("subjectName");
-                teachers.add(new Teacher(id, firstname, lastname, email, gender, photo,subjectName));
+                courses.add(new Course(id, name, description, credits, facultyName,subjectName));
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return teachers;
+        return courses;
     }
 
     //read/{id}
 
-    public Teacher getTeacherById(Long id) {
-        Teacher teacher = null;
+    public Course getCourseById(Long id) {
+        Course course = null;
         try {
-            String selectQuery = "select t.id, t.firstname, t.lastname, t.email, t.gender, t.password, t.photo, subject.name as subjectName" +
-                    " from teacher as t inner join subject on subject.id = t.subject_id where t.id = ?;";
+            String selectQuery = "select c.id, c.name, c.description, c.credits, f.name as facultyName, s.name as subjectName \" +\n" +
+                    "\"from course as c inner join faculty f on c.faculty_id = f.id inner join subject s on c.subject_id = s.id where t.id = ?;";
             preparedStatement = this.connection.prepareStatement(selectQuery);
             preparedStatement.setLong(1, id);
             resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
                 id = resultSet.getLong("id");
-                String firstname = resultSet.getString("firstname");
-                String lastname = resultSet.getString("lastname");
-                String email = resultSet.getString("email");
-                String gender = resultSet.getString("gender");
-                String password = resultSet.getString("password");
-                String photo = resultSet.getString("photo");
+                String name = resultSet.getString("name");
+                String description = resultSet.getString("description");
+                int credits = resultSet.getInt("credits");
+                String facultyName = resultSet.getString("facultyName");
                 String subjectName = resultSet.getString("subjectName");
-                teacher = new Teacher(id, firstname, lastname, email, gender, password, photo, subjectName);
+                course = new Course(id, name, description, credits, facultyName, subjectName);
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return teacher;
+        return course;
     }
 
-    //get next student by id
-
-    public Teacher getNextTeacher(Long currentTeacherId) {
-        Teacher nextTeacher = null;
+    //get next course by id
+    public Course getNextCourse(Long currentCourseId) {
+        Course nextCourse = null;
         try {
-            String selectQuery = "select t.id, t.firstname, t.lastname, t.email, t.gender, t.password, t.photo, \n" +
-                    "subject.name as subjectName from teacher as t inner join \n" +
-                    "subject on subject.id = t.subject_id where id > ? order by id asc limit 1;";
+            String selectQuery = "select c.id, c.name, c.description, c.credits, f.name as facultyName, s.name as subjectName\n" +
+                    "from course as c inner join faculty f on c.faculty_id = f.id \n" +
+                    "inner join subject s on c.subject_id = s.id where id > ? order by id asc limit 1;";
             preparedStatement = this.connection.prepareStatement(selectQuery);
-            preparedStatement.setLong(1, currentTeacherId);
+            preparedStatement.setLong(1, currentCourseId);
             resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
                 long id = resultSet.getLong("id");
-                String firstname = resultSet.getString("firstname");
-                String lastname = resultSet.getString("lastname");
-                String email = resultSet.getString("email");
-                String gender = resultSet.getString("gender");
-                String password = resultSet.getString("password");
-                String photo = resultSet.getString("photo");
+                String name = resultSet.getString("name");
+                String description = resultSet.getString("description");
+                int credits = resultSet.getInt("credits");
+                String facultyName = resultSet.getString("facultyName");
                 String subjectName = resultSet.getString("subjectName");
-                nextTeacher = new Teacher(id, firstname, lastname, email, gender, password, photo, subjectName);
+                nextCourse = new Course(id, name, description, credits, facultyName, subjectName);
             } else {
-                String firstTeacherQuery = "select t.id, t.firstname, t.lastname, t.email, t.gender, t.password, t.photo, \n" +
-                        "subject.name as subjectName from teacher as t inner join \n" +
-                        "subject on subject.id = t.subject_id order by id asc limit 1;";
-                preparedStatement = this.connection.prepareStatement(firstTeacherQuery);
+                String firstCourseQuery = "select c.id, c.name, c.description, c.credits, f.name as facultyName, s.name " +
+                        "as subjectName from course as c inner join faculty f on c.faculty_id = f.id " +
+                        "inner join subject s on c.subject_id = s.id order by id asc limit 1;";
+                preparedStatement = this.connection.prepareStatement(firstCourseQuery);
                 resultSet = preparedStatement.executeQuery();
                 while (resultSet.next()) {
                     long id = resultSet.getLong("id");
-                    String firstname = resultSet.getString("firstname");
-                    String lastname = resultSet.getString("lastname");
-                    String email = resultSet.getString("email");
-                    String gender = resultSet.getString("gender");
-                    String password = resultSet.getString("password");
-                    String photo = resultSet.getString("photo");
+                    String name = resultSet.getString("name");
+                    String description = resultSet.getString("description");
+                    int credits = resultSet.getInt("credits");
+                    String facultyName = resultSet.getString("facultyName");
                     String subjectName = resultSet.getString("subjectName");
-                    nextTeacher = new Teacher(id, firstname, lastname, email, gender, password, photo, subjectName);
+                    nextCourse = new Course(id, name, description, credits, facultyName, subjectName);
                 }
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return nextTeacher;
+        return nextCourse;
     }
 
     //update
 
-    public boolean editTeacher(Teacher teacher) {
+    public boolean editCourse(Course course) {
         boolean rowUpdated = false;
         try {
-            String query = "update teacher set firstname = ?, lastname = ?, email = ?, gender = ?, password = ?, photo = ? where id = ?";
+            String query = "update course set name = ?, description = ?, credits = ? where id = ?";
             preparedStatement = this.connection.prepareStatement(query);
-            preparedStatement.setString(1, teacher.getFirstname());
-            preparedStatement.setString(2, teacher.getLastname());
-            preparedStatement.setString(3, teacher.getEmail());
-            preparedStatement.setString(4, teacher.getGender());
-            preparedStatement.setString(5, teacher.getPassword());
-            preparedStatement.setString(6, teacher.getPhoto());
-            preparedStatement.setLong(7, teacher.getId());
+            preparedStatement.setString(1, course.getName());
+            preparedStatement.setString(2, course.getDescription());
+            preparedStatement.setInt(3, course.getCredits());
+            preparedStatement.setLong(4, course.getId());
             rowUpdated = preparedStatement.executeUpdate() > 0;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -205,15 +208,15 @@ public class CourseDao {
 
     //delete
 
-    public void deleteTeacher(int id) {
+    public void deleteCourse(int id) {
         try {
-            String deleteQuery = "delete from teacher where id =?";
+            String deleteQuery = "delete from course where id =?";
             preparedStatement = this.connection.prepareStatement(deleteQuery);
             preparedStatement.setInt(1, id);
             preparedStatement.executeUpdate();
-            System.out.println("Teacher is deleted");
+            System.out.println("Course is deleted");
         } catch (SQLException e) {
-            throw new RuntimeException("Error while deleting teacher", e);
+            throw new RuntimeException("Error while deleting course", e);
         }
     }
 

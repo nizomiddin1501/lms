@@ -23,12 +23,13 @@ public class Schedule {
     private String teacherName;
     private String classroomName;
 
-
-
-
-
-
-
-
-
+    public Schedule(Long id, String subjectName, String teacherName, String classroomName,  String dayOfWeek, LocalDateTime startTime, LocalDateTime endTime) {
+        this.id = id;
+        this.subjectName = subjectName;
+        this.teacherName = teacherName;
+        this.classroomName = classroomName;
+        this.dayOfWeek = dayOfWeek;
+        this.startTime = startTime;
+        this.endTime = endTime;
+    }
 }

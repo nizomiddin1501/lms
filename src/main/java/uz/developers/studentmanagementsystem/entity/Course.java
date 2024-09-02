@@ -14,7 +14,17 @@ public class Course {
     private String description;
     private int credits;
     private Long faculty_id;
+    private Long subject_id;
     private String facultyName;
+    private String subjectName;
 
 
+    public Course(Long id, String name, String description, int credits, String facultyName, String subjectName) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.credits = credits;
+        this.facultyName = facultyName;
+        this.subjectName = subjectName;
+    }
 }

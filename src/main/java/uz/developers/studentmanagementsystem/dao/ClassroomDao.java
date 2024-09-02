@@ -2,6 +2,7 @@ package uz.developers.studentmanagementsystem.dao;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import uz.developers.studentmanagementsystem.entity.Classroom;
 import uz.developers.studentmanagementsystem.entity.Result;
 import uz.developers.studentmanagementsystem.entity.Subject;
 
@@ -27,38 +28,27 @@ public class ClassroomDao {
         }
     }
 
-
-
-
     //create
-    public Result addSubject(Subject subject) {
+    public Result addClassroom(Classroom classroom) {
         int count = 0;
-        String subjectName = null;
         try {
-            if (subject.getName() != null && !subject.getName().isEmpty()) {
-                subjectName = subject.getName().substring(0, 1).toUpperCase() + subject.getName().substring(1).toLowerCase();
-            } else {
-                return new Result("Subject name cannot be empty", false);
-            }
-
             //check name
             String checkNameQuery = "select count(*) from subject where name = ?";
             preparedStatement = this.connection.prepareStatement(checkNameQuery);
-            preparedStatement.setString(1,subjectName);
+            preparedStatement.setString(1, classroom.getName());
             resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
                 count = resultSet.getInt(1);
             }
             if (count > 0) {
-                return new Result("Such subject already exist", false);
+                return new Result("Such classroom already exist", false);
             }
 
-            //add new subject
-            String sqlQuery = "insert into subject(name, photo, profession) values (?,?,?)";
+            //add new classroom
+            String sqlQuery = "insert into classroom(name, capacity) values (?,?)";
             preparedStatement = connection.prepareStatement(sqlQuery);
-            preparedStatement.setString(1, subjectName);
-            preparedStatement.setString(2, subject.getPhoto());
-            preparedStatement.setString(3, subject.getProfession());
+            preparedStatement.setString(1, classroom.getName());
+            preparedStatement.setInt(2, classroom.getCapacity());
             preparedStatement.executeUpdate();
             return new Result("Successfully added", true);
         } catch (SQLException throwables) {
@@ -68,92 +58,83 @@ public class ClassroomDao {
     }
 
     //read
-
-    public List<Subject> getSubjects() {
-        List<Subject> subjects = new ArrayList<>();
+    public List<Classroom> getClassrooms() {
+        List<Classroom> classrooms = new ArrayList<>();
         try {
-            String selectQuery = "select * from subject;";
+            String selectQuery = "select * from classroom;";
             preparedStatement = this.connection.prepareStatement(selectQuery);
             resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
                 long id = resultSet.getLong("id");
                 String name = resultSet.getString("name");
-                String photo = resultSet.getString("photo");
-                String profession = resultSet.getString("profession");
-                subjects.add(new Subject(id, name, photo, profession));
+                int capacity = resultSet.getInt("capacity");
+                classrooms.add(new Classroom(id, name, capacity));
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return subjects;
+        return classrooms;
     }
 
     //read/{id}
-
-    public Subject getSubjectById(Long id) {
-        Subject subject = null;
+    public Classroom getClassroomById(Long id) {
+        Classroom classroom = null;
         try {
-            String selectQuery = "select * from subject where id = ?;";
+            String selectQuery = "select * from classroom where id = ?;";
             preparedStatement = this.connection.prepareStatement(selectQuery);
             preparedStatement.setLong(1, id);
             resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
                 id = resultSet.getLong("id");
                 String name = resultSet.getString("name");
-                String photo = resultSet.getString("photo");
-                String profession = resultSet.getString("profession");
-                subject = new Subject(id, name, photo, profession);
+                int capacity = resultSet.getInt("capacity");
+                classroom = new Classroom(id, name, capacity);
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return subject;
+        return classroom;
     }
 
-    //get next subject by id
-
-    public Subject getNextSubject(Long currentSubjectId) {
-        Subject nextSubject = null;
+    //get next classroom by id
+    public Classroom getNextClassroom(Long currentClassroomId) {
+        Classroom nextClassroom = null;
         try {
-            String selectQuery = "select * from subject where id > ? order by id asc limit 1;";
+            String selectQuery = "select * from classroom where id > ? order by id asc limit 1;";
             preparedStatement = this.connection.prepareStatement(selectQuery);
-            preparedStatement.setLong(1, currentSubjectId);
+            preparedStatement.setLong(1, currentClassroomId);
             resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
                 long id = resultSet.getLong("id");
                 String name = resultSet.getString("name");
-                String photo = resultSet.getString("photo");
-                String profession = resultSet.getString("profession");
-                nextSubject = new Subject(id, name, photo, profession);
+                int capacity = resultSet.getInt("capacity");
+                nextClassroom = new Classroom(id, name, capacity);
             } else {
-                String firstSubjectQuery = "select * from subject order by id asc limit 1;";
-                preparedStatement = this.connection.prepareStatement(firstSubjectQuery);
+                String firstClassroomQuery = "select * from classroom order by id asc limit 1;";
+                preparedStatement = this.connection.prepareStatement(firstClassroomQuery);
                 resultSet = preparedStatement.executeQuery();
                 while (resultSet.next()) {
                     long id = resultSet.getLong("id");
                     String name = resultSet.getString("name");
-                    String photo = resultSet.getString("photo");
-                    String profession = resultSet.getString("profession");
-                    nextSubject = new Subject(id, name, photo, profession);
+                    int capacity = resultSet.getInt("capacity");
+                    nextClassroom = new Classroom(id, name, capacity);
                 }
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return nextSubject;
+        return nextClassroom;
     }
 
     //update
-
-    public boolean editSubject(Subject subject) {
+    public boolean editClassroom(Classroom classroom) {
         boolean rowUpdated = false;
         try {
-            String query = "update subject set name = ?, photo = ?, profession = ? where id = ?";
+            String query = "update classroom set name = ?, capacity = ? where id = ?";
             preparedStatement = this.connection.prepareStatement(query);
-            preparedStatement.setString(1, subject.getName());
-            preparedStatement.setString(2, subject.getPhoto());
-            preparedStatement.setString(3, subject.getProfession());
-            preparedStatement.setLong(4, subject.getId());
+            preparedStatement.setString(1, classroom.getName());
+            preparedStatement.setInt(2, classroom.getCapacity());
+            preparedStatement.setLong(3, classroom.getId());
             rowUpdated = preparedStatement.executeUpdate() > 0;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -162,29 +143,15 @@ public class ClassroomDao {
     }
 
     //delete
-
-    public void deleteSubject(int id) {
+    public void deleteClassroom(int id) {
         try {
-            String deleteQuery = "delete from subject where id =?";
+            String deleteQuery = "delete from classroom where id =?";
             preparedStatement = this.connection.prepareStatement(deleteQuery);
             preparedStatement.setInt(1, id);
             preparedStatement.executeUpdate();
-            System.out.println("Subject is deleted");
+            System.out.println("Classroom is deleted");
         } catch (SQLException e) {
-            throw new RuntimeException("Error while deleting subject", e);
+            throw new RuntimeException("Error while deleting classroom", e);
         }
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
 }
