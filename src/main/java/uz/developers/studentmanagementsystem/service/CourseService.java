@@ -13,7 +13,7 @@ public interface CourseService {
 
     Course getNextCourse(Long currentCourseId);
 
-    Result addCourse(Course teacher, String facultyName,String subjectName);
+    Result addCourse(Course course, String facultyName, String subjectName);
 
     boolean editCourse(Course course);
 

@@ -13,7 +13,7 @@ public interface StudentService {
 
     Student getNextStudent(Long currentStudentId);
 
-    Result addStudent(Student student);
+    Result addStudent(Student student, String facultyName);
 
     boolean editStudent(Student student);
 

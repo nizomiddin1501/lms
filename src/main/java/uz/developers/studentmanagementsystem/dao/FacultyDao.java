@@ -29,8 +29,6 @@ public class FacultyDao {
     }
 
 
-
-
     //create
     public Result addFaculty(Faculty faculty) {
         int count = 0;
@@ -44,7 +42,7 @@ public class FacultyDao {
             //check name
             String checkNameQuery = "select count(*) from faculty where name = ?";
             preparedStatement = this.connection.prepareStatement(checkNameQuery);
-            preparedStatement.setString(1,facultyName);
+            preparedStatement.setString(1, facultyName);
             resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
                 count = resultSet.getInt(1);
@@ -54,12 +52,13 @@ public class FacultyDao {
             }
 
             //add new faculty
-            String sqlQuery = "insert into faculty(name, dean, phone, email) values (?,?,?,?)";
+            String sqlQuery = "insert into faculty(name, dean, phone, email, photo) values (?,?,?,?,?)";
             preparedStatement = connection.prepareStatement(sqlQuery);
             preparedStatement.setString(1, facultyName);
             preparedStatement.setString(2, faculty.getDean());
             preparedStatement.setString(3, faculty.getPhone());
             preparedStatement.setString(4, faculty.getEmail());
+            preparedStatement.setString(5, faculty.getPhoto());
             preparedStatement.executeUpdate();
             return new Result("Successfully added", true);
         } catch (SQLException throwables) {
@@ -82,7 +81,8 @@ public class FacultyDao {
                 String dean = resultSet.getString("dean");
                 String phone = resultSet.getString("phone");
                 String email = resultSet.getString("email");
-                faculties.add(new Faculty(id, name, dean, phone, email));
+                String photo = resultSet.getString("photo");
+                faculties.add(new Faculty(id, name, dean, phone, email, photo));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -105,7 +105,8 @@ public class FacultyDao {
                 String dean = resultSet.getString("dean");
                 String phone = resultSet.getString("phone");
                 String email = resultSet.getString("email");
-                faculty = new Faculty(id, name, dean, phone, email);
+                String photo = resultSet.getString("photo");
+                faculty = new Faculty(id, name, dean, phone, email, photo);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -128,7 +129,8 @@ public class FacultyDao {
                 String dean = resultSet.getString("dean");
                 String phone = resultSet.getString("phone");
                 String email = resultSet.getString("email");
-                nextFaculty = new Faculty(id, name, dean, phone, email);
+                String photo = resultSet.getString("photo");
+                nextFaculty = new Faculty(id, name, dean, phone, email, photo);
             } else {
                 String firstFacultyQuery = "select * from faculty order by id asc limit 1;";
                 preparedStatement = this.connection.prepareStatement(firstFacultyQuery);
@@ -139,7 +141,8 @@ public class FacultyDao {
                     String dean = resultSet.getString("dean");
                     String phone = resultSet.getString("phone");
                     String email = resultSet.getString("email");
-                    nextFaculty = new Faculty(id, name, dean, phone, email);
+                    String photo = resultSet.getString("photo");
+                    nextFaculty = new Faculty(id, name, dean, phone, email, photo);
                 }
             }
         } catch (Exception e) {
@@ -153,13 +156,14 @@ public class FacultyDao {
     public boolean editFaculty(Faculty faculty) {
         boolean rowUpdated = false;
         try {
-            String query = "update faculty set name = ?, dean = ?, phone = ?, email = ? where id = ?";
+            String query = "update faculty set name = ?, dean = ?, phone = ?, email = ?, photo = ? where id = ?";
             preparedStatement = this.connection.prepareStatement(query);
             preparedStatement.setString(1, faculty.getName());
             preparedStatement.setString(2, faculty.getDean());
             preparedStatement.setString(3, faculty.getPhone());
             preparedStatement.setString(4, faculty.getEmail());
-            preparedStatement.setLong(5, faculty.getId());
+            preparedStatement.setString(5, faculty.getPhoto());
+            preparedStatement.setLong(6, faculty.getId());
             rowUpdated = preparedStatement.executeUpdate() > 0;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -180,17 +184,6 @@ public class FacultyDao {
             throw new RuntimeException("Error while deleting faculty", e);
         }
     }
-
-
-
-
-
-
-
-
-
-
-
 
 
 }

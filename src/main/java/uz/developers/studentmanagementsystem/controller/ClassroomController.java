@@ -5,9 +5,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import uz.developers.studentmanagementsystem.entity.Classroom;
-import uz.developers.studentmanagementsystem.entity.Teacher;
 import uz.developers.studentmanagementsystem.service.ClassroomService;
-import uz.developers.studentmanagementsystem.service.TeacherService;
 
 @Controller
 public class ClassroomController {
@@ -20,94 +18,74 @@ public class ClassroomController {
     }
 
 
-
-
     @GetMapping("/classrooms")
-    public String getSubjects(Model model){
-        model.addAttribute("classrooms",classroomService.getAllTeachers());
+    public String getClassrooms(Model model) {
+        model.addAttribute("classrooms", classroomService.getAllClassrooms());
         return "classrooms";
     }
 
     @GetMapping("/classrooms/new")
-    public String createStudentForm(Model model){
+    public String createClassroomForm(Model model) {
         Classroom classroom = new Classroom();
-        model.addAttribute("classroom",classroom);
+        model.addAttribute("classroom", classroom);
         return "create_classroom";
     }
 
     @PostMapping("/addClassroom")
-    public String saveTeacher(@ModelAttribute("teacher") Teacher teacher,
-                              @RequestParam("subjectName") String subjectName){
-        classroomService.addTeacher(teacher, subjectName);
+    public String saveClassroom(@ModelAttribute("classroom") Classroom classroom) {
+        classroomService.addClassroom(classroom);
         return "redirect:/classrooms";
     }
 
-
     @GetMapping("/classrooms/edit/{id}")
-    public String editSubjectForm(@PathVariable Long id, Model model){
-        model.addAttribute("teacher",classroomService.getTeacherById(id));
+    public String editClassroomForm(@PathVariable Long id, Model model) {
+        model.addAttribute("classroom", classroomService.getClassroomById(id));
         return "edit_classroom";
     }
 
     @PostMapping("/classrooms/{id}")
-    public String editTeacher(@PathVariable Long id,
-                              @ModelAttribute("teacher") Teacher teacher,
-                              Model model) {
+    public String editClassroom(@PathVariable Long id,
+                                @ModelAttribute("classroom") Classroom classroom,
+                                Model model) {
         // get subject from database by id
-        Teacher teacherById = classroomService.getTeacherById(id);
-        teacherById.setId(id);
-        teacherById.setFirstname(teacher.getFirstname());
-        teacherById.setLastname(teacher.getLastname());
-        teacherById.setEmail(teacher.getEmail());
-        teacherById.setGender(teacher.getGender());
-        teacherById.setPassword(teacher.getPassword());
-        teacherById.setPhoto(teacher.getPhoto());
+        Classroom classroomById = classroomService.getClassroomById(id);
+        classroomById.setId(id);
+        classroomById.setName(classroom.getName());
+        classroomById.setCapacity(classroom.getCapacity());
+        classroomById.setPhoto(classroom.getPhoto());
 
-        //save update teacher object
+        //save update classroom object
 
-        classroomService.editTeacher(teacherById);
+        classroomService.editClassroom(classroomById);
         return "redirect:/classrooms";
 
     }
 
-    @GetMapping("/teachers/{id}")
-    public String deleteTeacher(@PathVariable int id){
-        classroomService.deleteTeacher(id);
+    @GetMapping("/classrooms/{id}")
+    public String deleteClassroom(@PathVariable int id) {
+        classroomService.deleteClassroom(id);
         return "redirect:/classrooms";
 
     }
 
     @GetMapping("/classrooms/show/{id}")
-    public String showTeacher(@PathVariable Long id, Model model) {
-        Teacher teacher = classroomService.getTeacherById(id); // Talabani ID bo'yicha olish
-        model.addAttribute("teacher", teacher); // Talaba ma'lumotlarini modelga qo'shish
-        return "teacher_show"; // teacher_show.html sahifasini qaytarish
+    public String showClassroom(@PathVariable Long id, Model model) {
+        Classroom classroom = classroomService.getClassroomById(id); // Classroom ni ID bo'yicha olish
+        model.addAttribute("classroom", classroom); // Classroom ma'lumotlarini modelga qo'shish
+        return "classroom_show"; // classroom_show.html sahifasini qaytarish
 
     }
 
     @GetMapping("/classrooms/show/next/{currentId}")
-    public String showNextTeacher(@PathVariable Long currentId, Model model) {
-        Teacher nextTeacher = classroomService.getNextTeacher(currentId);
-        if (nextTeacher == null) {
-            // Agar keyingi teacher mavjud bo'lmasa, qaytib keladi yoki oxirgi teacherga o'tadi
+    public String showNextClassroom(@PathVariable Long currentId, Model model) {
+        Classroom nextClassroom = classroomService.getNextClassroom(currentId);
+        if (nextClassroom == null) {
+            // Agar keyingi classroom mavjud bo'lmasa, qaytib keladi yoki oxirgi classroom ga o'tadi
             return "redirect:/classrooms ";  // Yoki boshqa yo'naltirishni amalga oshirishingiz mumkin
         }
-        model.addAttribute("teacher", nextTeacher);
-        return "teacher_show";
+        model.addAttribute("classroom", nextClassroom);
+        return "classroom_show";
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 }

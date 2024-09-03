@@ -45,10 +45,11 @@ public class ClassroomDao {
             }
 
             //add new classroom
-            String sqlQuery = "insert into classroom(name, capacity) values (?,?)";
+            String sqlQuery = "insert into classroom(name, capacity, photo) values (?,?,?)";
             preparedStatement = connection.prepareStatement(sqlQuery);
             preparedStatement.setString(1, classroom.getName());
             preparedStatement.setInt(2, classroom.getCapacity());
+            preparedStatement.setString(3, classroom.getPhoto());
             preparedStatement.executeUpdate();
             return new Result("Successfully added", true);
         } catch (SQLException throwables) {
@@ -68,7 +69,8 @@ public class ClassroomDao {
                 long id = resultSet.getLong("id");
                 String name = resultSet.getString("name");
                 int capacity = resultSet.getInt("capacity");
-                classrooms.add(new Classroom(id, name, capacity));
+                String photo = resultSet.getString("photo");
+                classrooms.add(new Classroom(id, name, capacity, photo));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -88,7 +90,8 @@ public class ClassroomDao {
                 id = resultSet.getLong("id");
                 String name = resultSet.getString("name");
                 int capacity = resultSet.getInt("capacity");
-                classroom = new Classroom(id, name, capacity);
+                String photo = resultSet.getString("photo");
+                classroom = new Classroom(id, name, capacity, photo);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -108,7 +111,8 @@ public class ClassroomDao {
                 long id = resultSet.getLong("id");
                 String name = resultSet.getString("name");
                 int capacity = resultSet.getInt("capacity");
-                nextClassroom = new Classroom(id, name, capacity);
+                String photo = resultSet.getString("photo");
+                nextClassroom = new Classroom(id, name, capacity, photo);
             } else {
                 String firstClassroomQuery = "select * from classroom order by id asc limit 1;";
                 preparedStatement = this.connection.prepareStatement(firstClassroomQuery);
@@ -117,7 +121,8 @@ public class ClassroomDao {
                     long id = resultSet.getLong("id");
                     String name = resultSet.getString("name");
                     int capacity = resultSet.getInt("capacity");
-                    nextClassroom = new Classroom(id, name, capacity);
+                    String photo = resultSet.getString("photo");
+                    nextClassroom = new Classroom(id, name, capacity, photo);
                 }
             }
         } catch (Exception e) {
@@ -130,11 +135,12 @@ public class ClassroomDao {
     public boolean editClassroom(Classroom classroom) {
         boolean rowUpdated = false;
         try {
-            String query = "update classroom set name = ?, capacity = ? where id = ?";
+            String query = "update classroom set name = ?, capacity = ?, photo = ? where id = ?";
             preparedStatement = this.connection.prepareStatement(query);
             preparedStatement.setString(1, classroom.getName());
             preparedStatement.setInt(2, classroom.getCapacity());
-            preparedStatement.setLong(3, classroom.getId());
+            preparedStatement.setString(3, classroom.getPhoto());
+            preparedStatement.setLong(4, classroom.getId());
             rowUpdated = preparedStatement.executeUpdate() > 0;
         } catch (SQLException e) {
             e.printStackTrace();

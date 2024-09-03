@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+>
+<head>
+    <meta charset="UTF-8">
+    <title>Classrooms List</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+</head>
+<body>
+
+
+<!--<th:block th:replace="fragments/navbar :: navbar"></th:block>-->
+
+
+
+
+<div class="container">
+    <div class="row">
+        <h1 style="text-align: center">List Classrooms</h1>
+    </div>
+    <div class="row">
+        <div class="col-lg-3">
+            <a th:href="@{classrooms/new}" class="btn btn-primary btn-sm mb-3">Add Classroom</a>
+        </div>
+
+    </div>
+
+
+    <table class="table-responsive">
+
+        <table class="table table-stripped table-bordered">
+            <thead class="table-dark">
+            <tr>
+                <th> ID:</th>
+                <th> Name:</th>
+                <th> Capacity:</th>
+                <th> Photo:</th>
+                <th> Action:</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <tr th:each = "classroom : ${classrooms}">
+                <td th:text = "${classroom.id}"></td>
+                <td th:text = "${classroom.name}"></td>
+                <td th:text = "${classroom.capacity}"></td>
+                <td>
+                    <img th:src="@{${classroom.photo}}" alt="classroom photo" style="width:50px;height:50px;"/>
+                </td>
+
+                <td>
+                    <a class="btn btn-success" th:href="@{/classrooms/show/{id}(id=${classroom.id})}">Show</a>
+
+                    <a class="btn btn-primary" th:href="@{/classrooms/edit/{id}(id=${classroom.id})}">Update</a>
+
+                    <a class="btn btn-secondary" th:href="@{/classrooms/{id}(id=${classroom.id})}">Delete</a>
+
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </table>
+
+
+</div>
+
+
+</body>
+</html>

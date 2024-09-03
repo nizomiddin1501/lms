@@ -39,13 +39,14 @@ public class CourseDao {
             Long subjectId = getSubjectIdByName(subjectName);
 
             if (subjectId != null) {
-                String sqlQuery = "insert into course(name, description, credits, faculty_id, subject_id) values (?,?,?,?,?)";
+                String sqlQuery = "insert into course(name, description, credits, faculty_id, subject_id, photo) values (?,?,?,?,?,?)";
                 preparedStatement = connection.prepareStatement(sqlQuery);
                 preparedStatement.setString(1, course.getName());
                 preparedStatement.setString(2, course.getDescription());
                 preparedStatement.setInt(3, course.getCredits());
                 preparedStatement.setLong(4,facultyId);
                 preparedStatement.setLong(5,subjectId);
+                preparedStatement.setString(6,course.getPhoto());
                 preparedStatement.executeUpdate();
                 return new Result("Successfully added", true);
             } else {
@@ -104,18 +105,19 @@ public class CourseDao {
     public List<Course> getCourses() {
         List<Course> courses = new ArrayList<>();
         try {
-            String selectQuery = "select c.id, c.name, c.description, c.credits, f.name as facultyName, s.name as subjectName " +
+            String selectQuery = "select c.id, c.name, c.description, c.credits, f.name as facultyName, s.name as subjectName, c.photo " +
                     "from course as c inner join faculty f on c.faculty_id = f.id inner join subject s on c.subject_id = s.id;";
             preparedStatement = this.connection.prepareStatement(selectQuery);
             resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
-                long id = resultSet.getLong("id");
+                Long id = resultSet.getLong("id");
                 String name = resultSet.getString("name");
                 String description = resultSet.getString("description");
                 int credits = resultSet.getInt("credits");
                 String facultyName = resultSet.getString("facultyName");
                 String subjectName = resultSet.getString("subjectName");
-                courses.add(new Course(id, name, description, credits, facultyName,subjectName));
+                String photo = resultSet.getString("photo");
+                courses.add(new Course(id, name, description, credits, facultyName, subjectName, photo));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -128,8 +130,8 @@ public class CourseDao {
     public Course getCourseById(Long id) {
         Course course = null;
         try {
-            String selectQuery = "select c.id, c.name, c.description, c.credits, f.name as facultyName, s.name as subjectName \" +\n" +
-                    "\"from course as c inner join faculty f on c.faculty_id = f.id inner join subject s on c.subject_id = s.id where t.id = ?;";
+            String selectQuery = "select c.id, c.name, c.description, c.credits, f.name as facultyName, s.name as subjectName, c.photo " +
+                    "from course c inner join faculty f on c.faculty_id = f.id inner join subject s on c.subject_id = s.id where c.id = ?;";
             preparedStatement = this.connection.prepareStatement(selectQuery);
             preparedStatement.setLong(1, id);
             resultSet = preparedStatement.executeQuery();
@@ -140,7 +142,8 @@ public class CourseDao {
                 int credits = resultSet.getInt("credits");
                 String facultyName = resultSet.getString("facultyName");
                 String subjectName = resultSet.getString("subjectName");
-                course = new Course(id, name, description, credits, facultyName, subjectName);
+                String photo = resultSet.getString("photo");
+                course = new Course(id, name, description, credits, facultyName, subjectName, photo);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -152,9 +155,9 @@ public class CourseDao {
     public Course getNextCourse(Long currentCourseId) {
         Course nextCourse = null;
         try {
-            String selectQuery = "select c.id, c.name, c.description, c.credits, f.name as facultyName, s.name as subjectName\n" +
-                    "from course as c inner join faculty f on c.faculty_id = f.id \n" +
-                    "inner join subject s on c.subject_id = s.id where id > ? order by id asc limit 1;";
+            String selectQuery = "select c.id, c.name, c.description, c.credits, f.name as facultyName, " +
+                    "s.name as subjectName, c.photo from course as c inner join faculty f on c.faculty_id = f.id \n" +
+                    "inner join subject s on c.subject_id = s.id where id > ? order by c.id asc limit 1;";
             preparedStatement = this.connection.prepareStatement(selectQuery);
             preparedStatement.setLong(1, currentCourseId);
             resultSet = preparedStatement.executeQuery();
@@ -165,11 +168,12 @@ public class CourseDao {
                 int credits = resultSet.getInt("credits");
                 String facultyName = resultSet.getString("facultyName");
                 String subjectName = resultSet.getString("subjectName");
-                nextCourse = new Course(id, name, description, credits, facultyName, subjectName);
+                String photo = resultSet.getString("photo");
+                nextCourse = new Course(id, name, description, credits, facultyName, subjectName, photo);
             } else {
                 String firstCourseQuery = "select c.id, c.name, c.description, c.credits, f.name as facultyName, s.name " +
-                        "as subjectName from course as c inner join faculty f on c.faculty_id = f.id " +
-                        "inner join subject s on c.subject_id = s.id order by id asc limit 1;";
+                        "as subjectName, c.photo from course as c inner join faculty f on c.faculty_id = f.id " +
+                        "inner join subject s on c.subject_id = s.id order by c.id asc limit 1;";
                 preparedStatement = this.connection.prepareStatement(firstCourseQuery);
                 resultSet = preparedStatement.executeQuery();
                 while (resultSet.next()) {
@@ -179,7 +183,8 @@ public class CourseDao {
                     int credits = resultSet.getInt("credits");
                     String facultyName = resultSet.getString("facultyName");
                     String subjectName = resultSet.getString("subjectName");
-                    nextCourse = new Course(id, name, description, credits, facultyName, subjectName);
+                    String photo = resultSet.getString("photo");
+                    nextCourse = new Course(id, name, description, credits, facultyName, subjectName, photo);
                 }
             }
         } catch (Exception e) {

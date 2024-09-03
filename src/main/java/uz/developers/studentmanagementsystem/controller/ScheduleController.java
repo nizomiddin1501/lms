@@ -4,108 +4,94 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import uz.developers.studentmanagementsystem.entity.Teacher;
-import uz.developers.studentmanagementsystem.service.TeacherService;
+import uz.developers.studentmanagementsystem.entity.Schedule;
+import uz.developers.studentmanagementsystem.service.ScheduleService;
 
 @Controller
 public class ScheduleController {
 
-    private final TeacherService teacherService;
+    private final ScheduleService scheduleService;
 
     @Autowired
-    public ScheduleController(TeacherService teacherService) {
-        this.teacherService = teacherService;
+    public ScheduleController(ScheduleService scheduleService) {
+        this.scheduleService = scheduleService;
+    }
+
+    @GetMapping("/schedules")
+    public String getSchedules(Model model) {
+        model.addAttribute("schedules", scheduleService.getAllSchedules());
+        return "schedules";
+    }
+
+    @GetMapping("/schedules/new")
+    public String createScheduleForm(Model model) {
+        Schedule schedule = new Schedule();
+        model.addAttribute("schedule", schedule);
+        return "create_schedule";
+    }
+
+    @PostMapping("/addSchedule")
+    public String saveSchedule(@ModelAttribute("teacher") Schedule schedule,
+                               @RequestParam("subjectName") String subjectName,
+                               @RequestParam("teacherName") String teacherName,
+                               @RequestParam("classroomName") String classroomname) {
+        scheduleService.addSchedule(schedule, subjectName, teacherName, classroomname);
+        return "redirect:/schedules";
     }
 
 
-
-
-    @GetMapping("/teachers")
-    public String getSubjects(Model model){
-        model.addAttribute("teachers",teacherService.getAllTeachers());
-        return "teachers";
+    @GetMapping("/schedules/edit/{id}")
+    public String editScheduleForm(@PathVariable Long id, Model model) {
+        model.addAttribute("schedule", scheduleService.getScheduleById(id));
+        return "edit_schedule";
     }
 
-    @GetMapping("/teachers/new")
-    public String createStudentForm(Model model){
-        Teacher teacher = new Teacher();
-        model.addAttribute("teacher",teacher);
-        return "create_teacher";
-    }
+    @PostMapping("/schedules/{id}")
+    public String editSchedule(@PathVariable Long id,
+                               @ModelAttribute("schedule") Schedule schedule,
+                               Model model) {
+        // get schedule from database by id
+        Schedule scheduleById = scheduleService.getScheduleById(id);
+        scheduleById.setId(id);
+        scheduleById.setSubjectName(schedule.getSubjectName());
+        scheduleById.setTeacherName(schedule.getTeacherName());
+        scheduleById.setClassroomName(schedule.getClassroomName());
+        scheduleById.setDayOfWeek(schedule.getDayOfWeek());
+        scheduleById.setStartTime(schedule.getStartTime());
+        scheduleById.setEndTime(schedule.getEndTime());
 
-    @PostMapping("/addTeacher")
-    public String saveTeacher(@ModelAttribute("teacher") Teacher teacher,
-                              @RequestParam("subjectName") String subjectName){
-        teacherService.addTeacher(teacher, subjectName);
-        return "redirect:/teachers";
-    }
+        //save update schedule object
 
-
-    @GetMapping("/teachers/edit/{id}")
-    public String editSubjectForm(@PathVariable Long id, Model model){
-        model.addAttribute("teacher",teacherService.getTeacherById(id));
-        return "edit_teacher";
-    }
-
-    @PostMapping("/teachers/{id}")
-    public String editTeacher(@PathVariable Long id,
-                              @ModelAttribute("teacher") Teacher teacher,
-                              Model model) {
-        // get subject from database by id
-        Teacher teacherById = teacherService.getTeacherById(id);
-        teacherById.setId(id);
-        teacherById.setFirstname(teacher.getFirstname());
-        teacherById.setLastname(teacher.getLastname());
-        teacherById.setEmail(teacher.getEmail());
-        teacherById.setGender(teacher.getGender());
-        teacherById.setPassword(teacher.getPassword());
-        teacherById.setPhoto(teacher.getPhoto());
-
-        //save update teacher object
-
-        teacherService.editTeacher(teacherById);
-        return "redirect:/teachers";
+        scheduleService.editSchedule(scheduleById);
+        return "redirect:/schedules";
 
     }
 
-    @GetMapping("/teachers/{id}")
-    public String deleteTeacher(@PathVariable int id){
-        teacherService.deleteTeacher(id);
-        return "redirect:/teachers";
+    @GetMapping("/schedules/{id}")
+    public String deleteSchedule(@PathVariable int id) {
+        scheduleService.deleteSchedule(id);
+        return "redirect:/schedules";
 
     }
 
-    @GetMapping("/teachers/show/{id}")
-    public String showTeacher(@PathVariable Long id, Model model) {
-        Teacher teacher = teacherService.getTeacherById(id); // Talabani ID bo'yicha olish
-        model.addAttribute("teacher", teacher); // Talaba ma'lumotlarini modelga qo'shish
-        return "teacher_show"; // teacher_show.html sahifasini qaytarish
+    @GetMapping("/schedules/show/{id}")
+    public String showSchedule(@PathVariable Long id, Model model) {
+        Schedule schedule = scheduleService.getScheduleById(id); // Schedule ni ID bo'yicha olish
+        model.addAttribute("schedule", schedule); // Schedule ma'lumotlarini modelga qo'shish
+        return "schedule_show"; // schedule_show.html sahifasini qaytarish
 
     }
 
-    @GetMapping("/teachers/show/next/{currentId}")
-    public String showNextTeacher(@PathVariable Long currentId, Model model) {
-        Teacher nextTeacher = teacherService.getNextTeacher(currentId);
-        if (nextTeacher == null) {
-            // Agar keyingi teacher mavjud bo'lmasa, qaytib keladi yoki oxirgi teacherga o'tadi
-            return "redirect:/teachers ";  // Yoki boshqa yo'naltirishni amalga oshirishingiz mumkin
+    @GetMapping("/schedules/show/next/{currentId}")
+    public String showNextSchedule(@PathVariable Long currentId, Model model) {
+        Schedule nextSchedule = scheduleService.getNextSchedule(currentId);
+        if (nextSchedule == null) {
+            // Agar keyingi schedule mavjud bo'lmasa, qaytib keladi yoki oxirgi schedule ga o'tadi
+            return "redirect:/schedules ";  // Yoki boshqa yo'naltirishni amalga oshirishingiz mumkin
         }
-        model.addAttribute("teacher", nextTeacher);
-        return "teacher_show";
+        model.addAttribute("schedule", nextSchedule);
+        return "schedule_show";
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 }

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+>
+<head>
+    <meta charset="UTF-8">
+    <title>Add Course Form</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+</head>
+<body>
+
+<div class="container">
+    <div class="row">
+        <div class="col-lg-6 col-md-6 col-sm-6 container justify-content-center card">
+            <h1 class="text-center">Create New Course</h1>
+            <div class="card-body">
+                <form
+                        role="form"
+                        method="post"
+                        th:action="@{/addCourse}"
+                        th:object="${course}"
+                >
+
+                    <div class="form-group">
+                        <label>Course Name:</label>
+                        <input class="form-control" type="text" name="firstname" th:field="*{name}" placeholder="Enter course name" required/><br/>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Course Description:</label>
+                        <input class="form-control" type="text" name="description" th:field="*{description}" placeholder="Enter description" required/><br/>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Course Credits:</label>
+                        <input class="form-control" type="number" name="credits" th:field="*{credits}" placeholder="Enter course credits" /><br/>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Relevant Faculty:</label>
+                        <input class="form-control" type="text" name="facultyName" th:field="*{facultyName}" placeholder="Enter relevant faculty" /><br/>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Relevant Subject:</label>
+                        <input class="form-control" type="text" name="email" th:field="*{subjectName}" placeholder="Enter relevant subject" /><br/>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Course Picture:</label>
+                        <input class="form-control" type="text" name="photo" th:field="*{photo}" placeholder="Enter picture url" /><br/>
+                    </div>
+
+                    <div class="box-footer">
+                        <button class="btn btn-primary" type="submit"> Save </button>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

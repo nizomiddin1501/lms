@@ -1,111 +1,95 @@
 package uz.developers.studentmanagementsystem.controller;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import uz.developers.studentmanagementsystem.entity.Teacher;
-import uz.developers.studentmanagementsystem.service.TeacherService;
+import uz.developers.studentmanagementsystem.entity.Course;
+import uz.developers.studentmanagementsystem.service.CourseService;
+
 
 @Controller
 public class CourseController {
 
-    private final TeacherService teacherService;
+    private final CourseService courseService;
 
     @Autowired
-    public CourseController(TeacherService teacherService) {
-        this.teacherService = teacherService;
+    public CourseController(CourseService courseService) {
+        this.courseService = courseService;
     }
 
 
-
-
-    @GetMapping("/teachers")
-    public String getSubjects(Model model){
-        model.addAttribute("teachers",teacherService.getAllTeachers());
-        return "teachers";
+    @GetMapping("/courses")
+    public String getCourses(Model model) {
+        model.addAttribute("courses", courseService.getAllCourses());
+        return "courses";
     }
 
-    @GetMapping("/teachers/new")
-    public String createStudentForm(Model model){
-        Teacher teacher = new Teacher();
-        model.addAttribute("teacher",teacher);
-        return "create_teacher";
+    @GetMapping("/courses/new")
+    public String createCourseForm(Model model) {
+        Course course = new Course();
+        model.addAttribute("course", course);
+        return "create_course";
     }
 
-    @PostMapping("/addTeacher")
-    public String saveTeacher(@ModelAttribute("teacher") Teacher teacher,
-                              @RequestParam("subjectName") String subjectName){
-        teacherService.addTeacher(teacher, subjectName);
-        return "redirect:/teachers";
+    @PostMapping("/addCourse")
+    public String saveCourse(@ModelAttribute("course") Course course,
+                             @RequestParam("facultyName") String facultyName,
+                             @RequestParam("subjectName") String subjectName) {
+        courseService.addCourse(course, facultyName, subjectName);
+        return "redirect:/courses";
     }
 
 
-    @GetMapping("/teachers/edit/{id}")
-    public String editSubjectForm(@PathVariable Long id, Model model){
-        model.addAttribute("teacher",teacherService.getTeacherById(id));
-        return "edit_teacher";
+    @GetMapping("/courses/edit/{id}")
+    public String editCourseForm(@PathVariable Long id, Model model) {
+        model.addAttribute("course", courseService.getCourseById(id));
+        return "edit_course";
     }
 
-    @PostMapping("/teachers/{id}")
-    public String editTeacher(@PathVariable Long id,
-                              @ModelAttribute("teacher") Teacher teacher,
-                              Model model) {
-        // get subject from database by id
-        Teacher teacherById = teacherService.getTeacherById(id);
-        teacherById.setId(id);
-        teacherById.setFirstname(teacher.getFirstname());
-        teacherById.setLastname(teacher.getLastname());
-        teacherById.setEmail(teacher.getEmail());
-        teacherById.setGender(teacher.getGender());
-        teacherById.setPassword(teacher.getPassword());
-        teacherById.setPhoto(teacher.getPhoto());
+    @PostMapping("/courses/{id}")
+    public String editCourse(@PathVariable Long id,
+                             @ModelAttribute("course") Course course,
+                             Model model) {
+        // get course from database by id
+        Course courseById = courseService.getCourseById(id);
+        courseById.setId(id);
+        courseById.setName(course.getName());
+        courseById.setDescription(course.getDescription());
+        courseById.setCredits(course.getCredits());
+        courseById.setPhoto(course.getPhoto());
 
-        //save update teacher object
+        //save update course object
 
-        teacherService.editTeacher(teacherById);
-        return "redirect:/teachers";
+        courseService.editCourse(courseById);
+        return "redirect:/courses";
 
     }
 
-    @GetMapping("/teachers/{id}")
-    public String deleteTeacher(@PathVariable int id){
-        teacherService.deleteTeacher(id);
-        return "redirect:/teachers";
+    @GetMapping("/courses/{id}")
+    public String deleteCourse(@PathVariable int id) {
+        courseService.deleteCourse(id);
+        return "redirect:/courses";
 
     }
 
-    @GetMapping("/teachers/show/{id}")
-    public String showTeacher(@PathVariable Long id, Model model) {
-        Teacher teacher = teacherService.getTeacherById(id); // Talabani ID bo'yicha olish
-        model.addAttribute("teacher", teacher); // Talaba ma'lumotlarini modelga qo'shish
-        return "teacher_show"; // teacher_show.html sahifasini qaytarish
+    @GetMapping("/courses/show/{id}")
+    public String showCourse(@PathVariable Long id, Model model) {
+        Course course = courseService.getCourseById(id); // Course ni ID bo'yicha olish
+        model.addAttribute("course", course); // Course ma'lumotlarini modelga qo'shish
+        return "course_show"; // course_show.html sahifasini qaytarish
 
     }
 
-    @GetMapping("/teachers/show/next/{currentId}")
-    public String showNextTeacher(@PathVariable Long currentId, Model model) {
-        Teacher nextTeacher = teacherService.getNextTeacher(currentId);
-        if (nextTeacher == null) {
-            // Agar keyingi teacher mavjud bo'lmasa, qaytib keladi yoki oxirgi teacherga o'tadi
-            return "redirect:/teachers ";  // Yoki boshqa yo'naltirishni amalga oshirishingiz mumkin
+    @GetMapping("/courses/show/next/{currentId}")
+    public String showNextCourse(@PathVariable Long currentId, Model model) {
+        Course nextCourse = courseService.getNextCourse(currentId);
+        if (nextCourse == null) {
+            // Agar keyingi course mavjud bo'lmasa, qaytib keladi yoki oxirgi teacherga o'tadi
+            return "redirect:/courses ";  // Yoki boshqa yo'naltirishni amalga oshirishingiz mumkin
         }
-        model.addAttribute("teacher", nextTeacher);
-        return "teacher_show";
+        model.addAttribute("course", nextCourse);
+        return "course_show";
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 }

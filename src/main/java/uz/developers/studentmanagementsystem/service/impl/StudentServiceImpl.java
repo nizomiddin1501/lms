@@ -35,8 +35,8 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public Result addStudent(Student student) {
-        return studentDao.addStudent(student);
+    public Result addStudent(Student student, String facultyName) {
+        return studentDao.addStudent(student, facultyName);
     }
 
     @Override

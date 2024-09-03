@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+>
+<head>
+    <meta charset="UTF-8">
+    <title>Create Schedule Form</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+</head>
+<body>
+
+<div class="container">
+    <div class="row">
+        <div class="col-lg-6 col-md-6 col-sm-6 container justify-content-center card">
+            <h1 class="text-center">Create New Schedule</h1>
+            <div class="card-body">
+                <form
+                        role="form"
+                        method="post"
+                        th:action="@{/addSchedule}"
+                        th:object="${schedule}"
+                >
+
+                    <div class="form-group">
+                        <label>Subject Name:</label>
+                        <input class="form-control" type="text" name="subjectName" th:field="*{subjectName}" placeholder="Enter firstname" required/><br/>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Teacher Name:</label>
+                        <input class="form-control" type="text" name="teacherName" th:field="*{teacherName}" placeholder="Enter lastname" required/><br/>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Class Name:</label>
+                        <input class="form-control" type="text" name="classroomName" th:field="*{classroomName}" placeholder="Enter email address" /><br/>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Lesson Date:</label>
+                        <input class="form-control" type="text" name="password" th:field="*{dayOfWeek}" placeholder="Enter day of week" /><br/>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Start Time:</label>
+                        <input class="form-control" type="date" name="photo" th:field="*{startTime}" placeholder="Enter start time" /><br/>
+                    </div>
+
+                    <div class="form-group">
+                        <label>End Time:</label>
+                        <input class="form-control" type="datetime-local" name="subjectName" th:field="*{endTime}" placeholder="Enter end time" /><br/>
+                    </div>
+
+
+
+                    <div class="box-footer">
+                        <button class="btn btn-primary" type="submit"> Save </button>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

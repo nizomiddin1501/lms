@@ -41,9 +41,23 @@ public class Student {
         this.facultyName = facultyName;
     }
 
+    public Student(Long id, String firstname, String lastname, String email, String gender, String password, String photo, String facultyName) {
+        this.id = id;
+        this.firstname = firstname;
+        this.lastname = lastname;
+        this.email = email;
+        this.gender = gender;
+        this.password = password;
+        this.photo = photo;
+        this.facultyName = facultyName;
+    }
 
-
-
-
-
+    public Student(long id, String firstname, String lastname, String gender, String photo, String facultyName) {
+        this.id = id;
+        this.firstname = firstname;
+        this.lastname = lastname;
+        this.gender = gender;
+        this.photo = photo;
+        this.facultyName = facultyName;
+    }
 }

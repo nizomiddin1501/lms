@@ -139,12 +139,12 @@ public class ScheduleDao {
             while (resultSet.next()) {
                 long id = resultSet.getLong("id");
                 String subjectName = resultSet.getString("subjectName");
-                String teacherFirstname = resultSet.getString("teacherFirstname");
-                String teacherLastname = resultSet.getString("teacherLastname");
+                String teacherFirstname = resultSet.getString("firstname");
+                String teacherLastname = resultSet.getString("lastname");
                 String classroomName = resultSet.getString("classroomName");
-                String dayOfWeek = resultSet.getString("dayOfWeek");
-                LocalDateTime startTime = resultSet.getTimestamp("startTime").toLocalDateTime();
-                LocalDateTime endTime = resultSet.getTimestamp("endTime").toLocalDateTime();
+                String dayOfWeek = resultSet.getString("day_of_week");
+                LocalDateTime startTime = resultSet.getTimestamp("start_time").toLocalDateTime();
+                LocalDateTime endTime = resultSet.getTimestamp("end_time").toLocalDateTime();
 
                 // To'liq ismni birlashtirish
                 String teacherName = teacherFirstname + " " + teacherLastname;
@@ -174,12 +174,12 @@ public class ScheduleDao {
             while (resultSet.next()) {
                 id = resultSet.getLong("id");
                 String subjectName = resultSet.getString("subjectName");
-                String teacherFirstname = resultSet.getString("teacherFirstname");
-                String teacherLastname = resultSet.getString("teacherLastname");
+                String teacherFirstname = resultSet.getString("firstname");
+                String teacherLastname = resultSet.getString("lastname");
                 String classroomName = resultSet.getString("classroomName");
-                String dayOfWeek = resultSet.getString("dayOfWeek");
-                LocalDateTime startTime = resultSet.getTimestamp("startTime").toLocalDateTime();
-                LocalDateTime endTime = resultSet.getTimestamp("endTime").toLocalDateTime();
+                String dayOfWeek = resultSet.getString("day_of_week");
+                LocalDateTime startTime = resultSet.getTimestamp("start_time").toLocalDateTime();
+                LocalDateTime endTime = resultSet.getTimestamp("end_time").toLocalDateTime();
 
                 // To'liq ismni birlashtirish
                 String teacherName = teacherFirstname + " " + teacherLastname;
@@ -201,7 +201,7 @@ public class ScheduleDao {
                     "                   sc.start_time, sc.end_time from schedule sc \n" +
                     "\t\t\t\t   inner join subject s on sc.subject_id = s.id\n" +
                     "\t\t\t\t   inner join teacher t on sc.teacher_id = t.id\n" +
-                    "\t\t\t\t   inner join classroom c on sc.classroom_id = c.id where id > ? order by id asc limit 1;";
+                    "\t\t\t\t   inner join classroom c on sc.classroom_id = c.id where sc.id > ? order by id asc limit 1;";
             preparedStatement = this.connection.prepareStatement(selectQuery);
             preparedStatement.setLong(1, currentScheduleId);
             resultSet = preparedStatement.executeQuery();
@@ -224,7 +224,7 @@ public class ScheduleDao {
                         "                   sc.start_time, sc.end_time from schedule sc \n" +
                         "\t\t\t\t   inner join subject s on sc.subject_id = s.id\n" +
                         "\t\t\t\t   inner join teacher t on sc.teacher_id = t.id\n" +
-                        "\t\t\t\t   inner join classroom c on sc.classroom_id = c.id order by id asc limit 1;";
+                        "\t\t\t\t   inner join classroom c on sc.classroom_id = c.id order by sc.id asc limit 1;";
                 preparedStatement = this.connection.prepareStatement(firstScheduleQuery);
                 resultSet = preparedStatement.executeQuery();
                 while (resultSet.next()) {

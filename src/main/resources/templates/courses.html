@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+>
+<head>
+    <meta charset="UTF-8">
+    <title>Courses List</title>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+<!--    <link rel="stylesheet" href="/css/bootstrap.min.css">-->
+
+</head>
+<body>
+
+
+<!--<th:block th:replace="fragments/navbar :: navbar"></th:block>-->
+
+
+
+
+<div class="container">
+    <div class="row">
+        <h1 style="text-align: center">List Courses</h1>
+    </div>
+    <div class="row">
+        <div class="col-lg-3">
+            <a th:href="@{courses/new}" class="btn btn-primary btn-sm mb-3">Add Course</a>
+        </div>
+
+    </div>
+    <table class="table table-stripped table-bordered">
+        <thead class="table-dark">
+            <tr>
+                <th> ID:</th>
+                <th> Course Name:</th>
+                <th> Course Description:</th>
+                <th> Course Credits:</th>
+                <th> Faculty Name:</th>
+                <th> Subject Name:</th>
+                <th> Photo:</th>
+                <th> Action:</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            <tr th:each = "course : ${courses}">
+                <td th:text = "${course.id}"></td>
+                <td th:text = "${course.name}"></td>
+<!--                <td th:text = "${course.description}"></td>-->
+                <td th:text="${#strings.substring(course.description, 0, 10) + '...'}"></td>
+                <td th:text = "${course.credits}"></td>
+                <td th:text = "${course.facultyName}"></td>
+                <td th:text = "${course.subjectName}"></td>
+                <td>
+                    <img th:src="@{${course.photo}}" alt="course photo" style="width:50px;height:50px;"/>
+                </td>
+                <td>
+                    <a class="btn btn-success" th:href="@{/courses/show/{id}(id=${course.id})}">Show</a>
+
+                    <a class="btn btn-primary" th:href="@{/courses/edit/{id}(id=${course.id})}">Update</a>
+
+                    <a class="btn btn-secondary" th:href="@{/courses/{id}(id=${course.id})}">Delete</a>
+
+                </td>
+            </tr>
+        </tbody>
+
+    </table>
+
+
+</div>
+
+
+</body>
+</html>

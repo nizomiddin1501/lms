@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+>
+<head>
+    <meta charset="UTF-8">
+    <title>Faculties List</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+</head>
+<body>
+
+
+<!--<th:block th:replace="fragments/navbar :: navbar"></th:block>-->
+
+
+
+
+<div class="container">
+    <div class="row">
+        <h1 style="text-align: center">List Faculties</h1>
+    </div>
+    <div class="row">
+        <div class="col-lg-3">
+            <a th:href="@{faculties/new}" class="btn btn-primary btn-sm mb-3">Add Faculty</a>
+        </div>
+
+    </div>
+
+
+    <table class="table-responsive">
+
+        <table class="table table-stripped table-bordered">
+            <thead class="table-dark">
+            <tr>
+                <th> ID:</th>
+                <th> Name:</th>
+                <th> Dean:</th>
+                <th> Phone:</th>
+                <th> Email:</th>
+                <th> Photo:</th>
+                <th> Action:</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <tr th:each = "faculty : ${faculties}">
+                <td th:text = "${faculty.id}"></td>
+                <td th:text = "${faculty.name}"></td>
+                <td th:text = "${faculty.dean}"></td>
+                <td th:text = "${faculty.phone}"></td>
+                <td th:text = "${faculty.email}"></td>
+                <td>
+                    <img th:src="@{${faculty.photo}}" alt="student photo" style="width:50px;height:50px;"/>
+                </td>
+
+                <td>
+                    <a class="btn btn-success" th:href="@{/faculties/show/{id}(id=${faculty.id})}">Show</a>
+
+                    <a class="btn btn-primary" th:href="@{/faculties/edit/{id}(id=${faculty.id})}">Update</a>
+
+                    <a class="btn btn-secondary" th:href="@{/faculties/{id}(id=${faculty.id})}">Delete</a>
+
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </table>
+
+
+</div>
+
+
+</body>
+</html>

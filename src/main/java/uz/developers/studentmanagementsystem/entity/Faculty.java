@@ -13,6 +13,7 @@ public class Faculty {
     private String dean;
     private String phone;
     private String email;
+    private String photo;
 
 
 
