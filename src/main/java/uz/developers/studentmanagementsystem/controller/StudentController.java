@@ -21,22 +21,15 @@ public class StudentController {
         this.studentService = studentService;
     }
 
-//    @GetMapping("/")
-//    public String redirectToLogin() {
-//        return "redirect:/login";
-//    }
-//
-//    // Login sahifasi uchun mapping
-//    @GetMapping("/login")
-//    public String login() {
-//        return "login"; // login.html sahifasini qaytaradi
-//    }
-//
-//    // Home sahifasi uchun mapping
-//    @GetMapping("/home")
-//    public String home() {
-//        return "home"; // home.html sahifasini qaytaradi
-//    }
+
+
+    @PostMapping("/login")
+    public String login(@RequestParam String username, @RequestParam String password) {
+        // login logikasi
+        return "redirect:/"; // login muvaffaqiyatli bo'lsa, index sahifasiga o'tish
+    }
+
+
 
     @GetMapping("/students")
     public String getStudents(Model model){

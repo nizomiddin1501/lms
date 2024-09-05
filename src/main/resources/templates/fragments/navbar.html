@@ -1,19 +1,33 @@
-<!-- fragments/navbar.html -->
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <a class="navbar-brand" href="#">Student Management System</a>
-    <div class="collapse navbar-collapse">
-        <ul class="navbar-nav mr-auto">
-            <li class="nav-item active">
-                <a class="nav-link" href="/students">Home</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="/students/new">Add Student</a>
-            </li>
-        </ul>
-        <ul class="navbar-nav ml-auto">
-            <li class="nav-item">
-                <a class="nav-link" href="/logout">Logout</a>
-            </li>
-        </ul>
-    </div>
+<nav xmlns:sec="http://www.w3.org/1999/xhtml">
+    <ul>
+        <!-- Umumiy Linklar -->
+        <li><a href="/">Home</a></li>
+        <li><a href="/profile">Profile</a></li>
+
+        <!-- ADMIN roli uchun -->
+        <div sec:authorize="hasRole('ADMIN')">
+            <li><a href="/admin/dashboard">Admin Dashboard</a></li>
+            <li><a href="/students">Manage Students</a></li>
+            <li><a href="/teachers">Manage Teachers</a></li>
+            <li><a href="/subjects">Manage Subjects</a></li>
+            <li><a href="/courses">Manage Courses</a></li>
+        </div>
+
+        <!-- TEACHER roli uchun -->
+        <div sec:authorize="hasRole('TEACHER')">
+            <li><a href="/students">View Students</a></li>
+            <li><a href="/courses">Manage Courses</a></li>
+            <li><a href="/subjects">View Subjects</a></li>
+        </div>
+
+        <!-- STUDENT roli uchun -->
+        <div sec:authorize="hasRole('STUDENT')">
+            <li><a href="/courses">View Courses</a></li>
+            <li><a href="/subjects">View Subjects</a></li>
+            <li><a href="/teachers">View Teachers</a></li>
+        </div>
+
+        <!-- Logout Link -->
+        <li><a href="/logout">Logout</a></li>
+    </ul>
 </nav>
