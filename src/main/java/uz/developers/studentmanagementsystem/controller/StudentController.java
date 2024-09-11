@@ -23,11 +23,11 @@ public class StudentController {
 
 
 
-    @PostMapping("/login")
-    public String login(@RequestParam String username, @RequestParam String password) {
-        // login logikasi
-        return "redirect:/"; // login muvaffaqiyatli bo'lsa, index sahifasiga o'tish
-    }
+//    @PostMapping("/login")
+//    public String login(@RequestParam String username, @RequestParam String password) {
+//        // login logikasi
+//        return "redirect:/"; // login muvaffaqiyatli bo'lsa, index sahifasiga o'tish
+//    }
 
 
 
