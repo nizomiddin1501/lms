@@ -20,8 +20,13 @@ public class ScheduleServiceImpl implements ScheduleService {
     }
 
     @Override
-    public List<Schedule> getAllSchedules() {
-        return scheduleDao.getSchedules();
+    public List<Schedule> getAllSchedules(int size, int page) {
+        return scheduleDao.getSchedules(size,page);
+    }
+
+    @Override
+    public int getTotalSchedules() {
+        return scheduleDao.getTotalSchedules();
     }
 
     @Override

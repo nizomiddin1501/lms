@@ -1,5 +1,4 @@
 package uz.developers.studentmanagementsystem.service;
-
 import uz.developers.studentmanagementsystem.entity.Result;
 import uz.developers.studentmanagementsystem.entity.Schedule;
 
@@ -9,7 +8,9 @@ import java.util.List;
 public interface ScheduleService {
 
 
-    List<Schedule> getAllSchedules();
+    List<Schedule> getAllSchedules(int size, int page);
+
+    int getTotalSchedules();
 
     Schedule getScheduleById(Long id);
 

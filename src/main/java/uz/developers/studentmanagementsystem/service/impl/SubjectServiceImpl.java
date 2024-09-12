@@ -23,8 +23,13 @@ public class SubjectServiceImpl implements SubjectService {
     }
 
     @Override
-    public List<Subject> getAllSubjects() {
-        return subjectDao.getSubjects();
+    public List<Subject> getAllSubjects(int pageNumber, int pageSize) {
+        return subjectDao.getSubjects(pageNumber,pageSize);
+    }
+
+    @Override
+    public int getTotalSubjects() {
+        return subjectDao.getTotalSubjects();
     }
 
     @Override

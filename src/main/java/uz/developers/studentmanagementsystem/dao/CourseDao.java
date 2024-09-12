@@ -102,12 +102,14 @@ public class CourseDao {
 
     //read
 
-    public List<Course> getCourses() {
+    public List<Course> getCourses(int page, int size) {
         List<Course> courses = new ArrayList<>();
         try {
             String selectQuery = "select c.id, c.name, c.description, c.credits, f.name as facultyName, s.name as subjectName, c.photo " +
-                    "from course as c inner join faculty f on c.faculty_id = f.id inner join subject s on c.subject_id = s.id;";
+                    "from course as c inner join faculty f on c.faculty_id = f.id inner join subject s on c.subject_id = s.id limit ? offset ?;";
             preparedStatement = this.connection.prepareStatement(selectQuery);
+            preparedStatement.setInt(1,size);
+            preparedStatement.setInt(2, (page - 1) * size);
             resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
                 Long id = resultSet.getLong("id");
@@ -123,6 +125,25 @@ public class CourseDao {
             e.printStackTrace();
         }
         return courses;
+    }
+
+
+    //find pages for pagination
+    public int getTotalCourses() {
+        int totalCourses = 0;
+        try {
+            String countQuery = "select count(*) from course;";
+
+            preparedStatement = this.connection.prepareStatement(countQuery);
+            resultSet = preparedStatement.executeQuery();
+
+            if (resultSet.next()) {
+                totalCourses = resultSet.getInt(1); // Umumiy yozuvlar soni
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return totalCourses;
     }
 
     //read/{id}

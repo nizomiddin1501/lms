@@ -86,12 +86,14 @@ public class StudentDao {
 
     //read
 
-    public List<Student> getStudents() {
+    public List<Student> getStudents(int page, int size) {
         List<Student> students = new ArrayList<>();
         try {
             String selectQuery = "select s.id, s.firstname, s.lastname, s.gender, s.photo, " +
-                    "f.name as facultyName from student s inner join faculty f on s.faculty_id = f.id;";
+                    "f.name as facultyName from student s inner join faculty f on s.faculty_id = f.id limit ? offset ?;";
             preparedStatement = this.connection.prepareStatement(selectQuery);
+            preparedStatement.setInt(1,size);
+            preparedStatement.setInt(2, (page - 1) * size);
             resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
                 long id = resultSet.getLong("id");
@@ -106,6 +108,25 @@ public class StudentDao {
             e.printStackTrace();
         }
         return students;
+    }
+
+
+    //find pages for pagination
+    public int getTotalStudents() {
+        int totalStudents = 0;
+        try {
+            String countQuery = "select count(*) from student;";
+
+            preparedStatement = this.connection.prepareStatement(countQuery);
+            resultSet = preparedStatement.executeQuery();
+
+            if (resultSet.next()) {
+                totalStudents = resultSet.getInt(1); // Umumiy yozuvlar soni
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return totalStudents;
     }
 
 

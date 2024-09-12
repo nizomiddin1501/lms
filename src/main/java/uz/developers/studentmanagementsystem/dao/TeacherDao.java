@@ -88,12 +88,14 @@ public class TeacherDao {
 
     //read
 
-    public List<Teacher> getTeachers() {
+    public List<Teacher> getTeachers(int page, int size) {
         List<Teacher> teachers = new ArrayList<>();
         try {
             String selectQuery = "select teacher.id, teacher.firstname, teacher.lastname, teacher.email, teacher.gender, teacher.photo, subject.name as subjectName " +
-                    "from teacher inner join subject on subject.id = teacher.subject_id;";
+                    "from teacher inner join subject on subject.id = teacher.subject_id limit ? offset ?;";
             preparedStatement = this.connection.prepareStatement(selectQuery);
+            preparedStatement.setInt(1,size);
+            preparedStatement.setInt(2, (page - 1) * size);
             resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
                 long id = resultSet.getLong("id");
@@ -110,6 +112,28 @@ public class TeacherDao {
         }
         return teachers;
     }
+
+
+
+    //find pages for pagination
+    public int getTotalTeachers() {
+        int totalTeachers = 0;
+        try {
+            String countQuery = "select count(*) from teacher;";
+
+            preparedStatement = this.connection.prepareStatement(countQuery);
+            resultSet = preparedStatement.executeQuery();
+
+            if (resultSet.next()) {
+                totalTeachers = resultSet.getInt(1); // Umumiy yozuvlar soni
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return totalTeachers;
+    }
+
+
 
     //read/{id}
 

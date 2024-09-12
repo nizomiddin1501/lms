@@ -4,10 +4,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import uz.developers.studentmanagementsystem.entity.Student;
 import uz.developers.studentmanagementsystem.entity.Subject;
 import uz.developers.studentmanagementsystem.entity.Teacher;
 import uz.developers.studentmanagementsystem.service.StudentService;
 import uz.developers.studentmanagementsystem.service.TeacherService;
+
+import java.util.List;
 
 @Controller
 public class TeacherController {
@@ -23,9 +26,26 @@ public class TeacherController {
 
 
     @GetMapping("/teachers")
-    public String getSubjects(Model model){
-        model.addAttribute("teachers",teacherService.getAllTeachers());
-        return "teachers";
+    public String getTeachers(@RequestParam(defaultValue = "1") int page, // Sahifa raqami
+                              @RequestParam(defaultValue = "5") int size, // Har sahifadagi yozuvlar soni
+                              Model model) {
+
+        // Ma'lumotlar ro'yxatini olish
+        List<Teacher> teachers = teacherService.getAllTeachers(page, size);
+
+        // Umumiy yozuvlar sonini olish
+        int totalTeachers = teacherService.getTotalTeachers();
+
+        // Umumiy sahifalar sonini hisoblash
+        int totalPages = (int) Math.ceil((double) totalTeachers / size);
+
+        // Modelga ma'lumotlarni qo'shish
+        model.addAttribute("teachers", teachers);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", totalPages);
+        model.addAttribute("pageSize", size);
+
+        return "teachers"; // teachers.html sahifasiga yo'naltiramiz
     }
 
     @GetMapping("/teachers/new")

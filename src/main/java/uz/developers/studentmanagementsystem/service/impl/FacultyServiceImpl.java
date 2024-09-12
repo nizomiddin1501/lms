@@ -20,8 +20,14 @@ public class FacultyServiceImpl implements FacultyService {
     }
 
     @Override
-    public List<Faculty> getAllFaculties() {
-        return facultyDao.getFaculties();
+    public List<Faculty> getAllFaculties(int size, int page) {
+        return facultyDao.getFaculties(size,page);
+    }
+
+    @Override
+    public int getTotalFaculties() {
+        return facultyDao.getTotalFaculties();
+
     }
 
     @Override

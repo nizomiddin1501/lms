@@ -4,8 +4,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import uz.developers.studentmanagementsystem.entity.Course;
 import uz.developers.studentmanagementsystem.entity.Schedule;
 import uz.developers.studentmanagementsystem.service.ScheduleService;
+
+import java.util.List;
 
 @Controller
 public class ScheduleController {
@@ -18,9 +21,26 @@ public class ScheduleController {
     }
 
     @GetMapping("/schedules")
-    public String getSchedules(Model model) {
-        model.addAttribute("schedules", scheduleService.getAllSchedules());
-        return "schedules";
+    public String getCourses(@RequestParam(defaultValue = "1") int page, // Sahifa raqami
+                             @RequestParam(defaultValue = "5") int size, // Har sahifadagi yozuvlar soni
+                             Model model) {
+
+        // Ma'lumotlar ro'yxatini olish
+        List<Schedule> schedules = scheduleService.getAllSchedules(page, size);
+
+        // Umumiy yozuvlar sonini olish
+        int totalSchedule = scheduleService.getTotalSchedules();
+
+        // Umumiy sahifalar sonini hisoblash
+        int totalPages = (int) Math.ceil((double) totalSchedule / size);
+
+        // Modelga ma'lumotlarni qo'shish
+        model.addAttribute("schedules", schedules);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", totalPages);
+        model.addAttribute("pageSize", size);
+
+        return "schedules"; // schedules.html sahifasiga yo'naltiramiz
     }
 
     @GetMapping("/schedules/new")

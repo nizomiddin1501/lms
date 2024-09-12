@@ -1,5 +1,4 @@
 package uz.developers.studentmanagementsystem.service;
-
 import uz.developers.studentmanagementsystem.entity.Result;
 import uz.developers.studentmanagementsystem.entity.Student;
 
@@ -7,7 +6,9 @@ import java.util.List;
 
 public interface StudentService {
 
-    List<Student> getAllStudents();
+    List<Student> getAllStudents(int size, int page);
+
+    int getTotalStudents();
 
     Student getStudentById(Long id);
 

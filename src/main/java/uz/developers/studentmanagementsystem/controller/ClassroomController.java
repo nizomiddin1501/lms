@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.*;
 import uz.developers.studentmanagementsystem.entity.Classroom;
 import uz.developers.studentmanagementsystem.service.ClassroomService;
 
+import java.util.List;
+
 @Controller
 public class ClassroomController {
 
@@ -19,9 +21,26 @@ public class ClassroomController {
 
 
     @GetMapping("/classrooms")
-    public String getClassrooms(Model model) {
-        model.addAttribute("classrooms", classroomService.getAllClassrooms());
-        return "classrooms";
+    public String getClassrooms(@RequestParam(defaultValue = "1") int page, // Sahifa raqami
+                                @RequestParam(defaultValue = "5") int size, // Har sahifadagi yozuvlar soni
+                                Model model) {
+
+        // Ma'lumotlar ro'yxatini olish
+        List<Classroom> classrooms = classroomService.getAllClassrooms(page, size);
+
+        // Umumiy yozuvlar sonini olish
+        int totalClassrooms = classroomService.getTotalClassrooms();
+
+        // Umumiy sahifalar sonini hisoblash
+        int totalPages = (int) Math.ceil((double) totalClassrooms / size);
+
+        // Modelga ma'lumotlarni qo'shish
+        model.addAttribute("classrooms", classrooms);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", totalPages);
+        model.addAttribute("pageSize", size);
+
+        return "classrooms"; // classrooms.html sahifasiga yo'naltiramiz
     }
 
     @GetMapping("/classrooms/new")

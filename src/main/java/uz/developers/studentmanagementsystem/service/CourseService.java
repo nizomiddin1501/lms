@@ -1,4 +1,5 @@
 package uz.developers.studentmanagementsystem.service;
+import uz.developers.studentmanagementsystem.entity.Classroom;
 import uz.developers.studentmanagementsystem.entity.Course;
 import uz.developers.studentmanagementsystem.entity.Result;
 
@@ -7,7 +8,9 @@ import java.util.List;
 public interface CourseService {
 
 
-    List<Course> getAllCourses();
+    List<Course> getAllCourses(int size, int page);
+
+    int getTotalCourses();
 
     Course getCourseById(Long id);
 

@@ -69,11 +69,13 @@ public class FacultyDao {
 
     //read
 
-    public List<Faculty> getFaculties() {
+    public List<Faculty> getFaculties(int page, int size) {
         List<Faculty> faculties = new ArrayList<>();
         try {
-            String selectQuery = "select * from faculty;";
+            String selectQuery = "select * from faculty limit ? offset ?;";
             preparedStatement = this.connection.prepareStatement(selectQuery);
+            preparedStatement.setInt(1,size);
+            preparedStatement.setInt(2, (page - 1) * size);
             resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
                 long id = resultSet.getLong("id");
@@ -88,6 +90,24 @@ public class FacultyDao {
             e.printStackTrace();
         }
         return faculties;
+    }
+
+    //find pages for pagination
+    public int getTotalFaculties() {
+        int totalFaculties = 0;
+        try {
+            String countQuery = "select count(*) from faculty;";
+
+            preparedStatement = this.connection.prepareStatement(countQuery);
+            resultSet = preparedStatement.executeQuery();
+
+            if (resultSet.next()) {
+                totalFaculties = resultSet.getInt(1); // Umumiy yozuvlar soni
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return totalFaculties;
     }
 
     //read/{id}

@@ -1,7 +1,5 @@
 package uz.developers.studentmanagementsystem.service;
-
 import uz.developers.studentmanagementsystem.entity.Result;
-import uz.developers.studentmanagementsystem.entity.Student;
 import uz.developers.studentmanagementsystem.entity.Teacher;
 
 import java.util.List;
@@ -9,7 +7,9 @@ import java.util.List;
 public interface TeacherService {
 
 
-    List<Teacher> getAllTeachers();
+    List<Teacher> getAllTeachers(int size, int page);
+
+    int getTotalTeachers();
 
     Teacher getTeacherById(Long id);
 

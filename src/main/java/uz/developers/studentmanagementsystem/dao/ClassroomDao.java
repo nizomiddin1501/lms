@@ -59,11 +59,13 @@ public class ClassroomDao {
     }
 
     //read
-    public List<Classroom> getClassrooms() {
+    public List<Classroom> getClassrooms(int page, int size) {
         List<Classroom> classrooms = new ArrayList<>();
         try {
-            String selectQuery = "select * from classroom;";
+            String selectQuery = "select * from classroom limit ? offset ?;";
             preparedStatement = this.connection.prepareStatement(selectQuery);
+            preparedStatement.setInt(1,size);
+            preparedStatement.setInt(2, (page - 1) * size);
             resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
                 long id = resultSet.getLong("id");
@@ -76,6 +78,25 @@ public class ClassroomDao {
             e.printStackTrace();
         }
         return classrooms;
+    }
+
+
+    //find pages for pagination
+    public int getTotalClassrooms() {
+        int totalClassrooms = 0;
+        try {
+            String countQuery = "select count(*) from classroom;";
+
+            preparedStatement = this.connection.prepareStatement(countQuery);
+            resultSet = preparedStatement.executeQuery();
+
+            if (resultSet.next()) {
+                totalClassrooms = resultSet.getInt(1); // Umumiy yozuvlar soni
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return totalClassrooms;
     }
 
     //read/{id}

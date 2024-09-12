@@ -3,12 +3,11 @@ package uz.developers.studentmanagementsystem.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 import uz.developers.studentmanagementsystem.entity.Subject;
 import uz.developers.studentmanagementsystem.service.SubjectService;
+
+import java.util.List;
 
 @Controller
 public class SubjectController {
@@ -22,8 +21,22 @@ public class SubjectController {
 
 
     @GetMapping("/subjects")
-    public String getSubjects(Model model){
-        model.addAttribute("subjects",subjectService.getAllSubjects());
+    public String getSubjects(@RequestParam(defaultValue = "1") int page,
+                              @RequestParam(defaultValue = "5") int size,
+                              Model model) {
+        // Subjectsni pagination bilan olish
+        List<Subject> subjects = subjectService.getAllSubjects(page, size);
+
+        // Umumiy subjectlar sonini olish
+        int totalSubjects = subjectService.getTotalSubjects();
+        int totalPages = (int) Math.ceil((double) totalSubjects / size);
+
+        // Modelga ma'lumot qo'shish
+        model.addAttribute("subjects", subjects);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", totalPages);
+        model.addAttribute("pageSize", size);
+
         return "subjects";
     }
 

@@ -24,8 +24,13 @@ public class ClassroomServiceImpl implements ClassroomService {
 
 
     @Override
-    public List<Classroom> getAllClassrooms() {
-        return classroomDao.getClassrooms();
+    public List<Classroom> getAllClassrooms(int page, int size) {
+        return classroomDao.getClassrooms(page,size);
+    }
+
+    @Override
+    public int getTotalClassrooms() {
+        return classroomDao.getTotalClassrooms();
     }
 
     @Override

@@ -10,12 +10,6 @@
 </head>
 <body>
 
-
-<!--<th:block th:replace="fragments/navbar :: navbar"></th:block>-->
-
-
-
-
 <div class="container">
     <div class="row">
         <h1 style="text-align: center">List Subjects</h1>
@@ -24,7 +18,6 @@
         <div class="col-lg-3">
             <a th:href="@{subjects/new}" class="btn btn-primary btn-sm mb-3">Add Subject</a>
         </div>
-
     </div>
 
 
@@ -62,6 +55,30 @@
             </tbody>
         </table>
     </table>
+
+
+
+    <!-- Pagination controls -->
+    <div class="row">
+        <div class="col-md-12 text-center">
+            <nav aria-label="Page navigation">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">
+                        <a class="page-link" th:href="@{/subjects(page=${currentPage - 1}, size=${pageSize})}">Previous</a>
+                    </li>
+                    <li class="page-item" th:each="i : ${#numbers.sequence(1, totalPages)}"
+                        th:classappend="${i == currentPage} ? 'active'">
+                        <a class="page-link" th:href="@{/subjects(page=${i}, size=${pageSize})}" th:text="${i}">1</a>
+                    </li>
+                    <li class="page-item" th:classappend="${currentPage == totalPages} ? 'disabled'">
+                        <a class="page-link" th:href="@{/subjects(page=${currentPage + 1}, size=${pageSize})}">Next</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+
+
 
 
 </div>

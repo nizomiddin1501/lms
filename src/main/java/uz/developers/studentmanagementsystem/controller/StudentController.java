@@ -5,7 +5,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import uz.developers.studentmanagementsystem.dao.StudentDao;
+import uz.developers.studentmanagementsystem.entity.Course;
 import uz.developers.studentmanagementsystem.entity.Student;
+import uz.developers.studentmanagementsystem.entity.Subject;
 import uz.developers.studentmanagementsystem.service.StudentService;
 
 import java.sql.SQLException;
@@ -32,10 +34,28 @@ public class StudentController {
 
 
     @GetMapping("/students")
-    public String getStudents(Model model){
-        model.addAttribute("students",studentService.getAllStudents());
-        return "students";
+    public String getStudents(@RequestParam(defaultValue = "1") int page, // Sahifa raqami
+                             @RequestParam(defaultValue = "5") int size, // Har sahifadagi yozuvlar soni
+                             Model model) {
+
+        // Ma'lumotlar ro'yxatini olish
+        List<Student> students = studentService.getAllStudents(page, size);
+
+        // Umumiy yozuvlar sonini olish
+        int totalStudents = studentService.getTotalStudents();
+
+        // Umumiy sahifalar sonini hisoblash
+        int totalPages = (int) Math.ceil((double) totalStudents / size);
+
+        // Modelga ma'lumotlarni qo'shish
+        model.addAttribute("students", students);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", totalPages);
+        model.addAttribute("pageSize", size);
+
+        return "students"; // students.html sahifasiga yo'naltiramiz
     }
+
 
     @GetMapping("/students/new")
     public String createStudentForm(Model model){

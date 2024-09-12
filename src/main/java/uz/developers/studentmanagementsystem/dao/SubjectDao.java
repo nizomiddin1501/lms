@@ -70,11 +70,13 @@ public class SubjectDao {
 
     //read
 
-    public List<Subject> getSubjects() {
+    public List<Subject> getSubjects(int pageNumber, int pageSize) {
         List<Subject> subjects = new ArrayList<>();
         try {
-            String selectQuery = "select * from subject;";
+            String selectQuery = "select * from subject limit ? offset ?;";
             preparedStatement = this.connection.prepareStatement(selectQuery);
+            preparedStatement.setInt(1,pageSize);
+            preparedStatement.setInt(2,(pageNumber - 1) * pageSize);
             resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
                 long id = resultSet.getLong("id");
@@ -88,6 +90,27 @@ public class SubjectDao {
         }
         return subjects;
     }
+
+
+    //find pages for pagination
+    public int getTotalSubjects() {
+        int totalSubjects = 0;
+        try {
+            String countQuery = "select count(*) from subject;";
+
+            preparedStatement = this.connection.prepareStatement(countQuery);
+            resultSet = preparedStatement.executeQuery();
+
+            if (resultSet.next()) {
+                totalSubjects = resultSet.getInt(1); // Umumiy yozuvlar soni
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return totalSubjects;
+    }
+
+
 
     //read/{id}
 

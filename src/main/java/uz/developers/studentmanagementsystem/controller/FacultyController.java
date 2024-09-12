@@ -4,10 +4,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import uz.developers.studentmanagementsystem.entity.Course;
 import uz.developers.studentmanagementsystem.entity.Faculty;
 import uz.developers.studentmanagementsystem.entity.Teacher;
 import uz.developers.studentmanagementsystem.service.FacultyService;
 import uz.developers.studentmanagementsystem.service.TeacherService;
+
+import java.util.List;
 
 @Controller
 public class FacultyController {
@@ -20,10 +23,28 @@ public class FacultyController {
     }
 
 
+
     @GetMapping("/faculties")
-    public String getFaculties(Model model) {
-        model.addAttribute("faculties", facultyService.getAllFaculties());
-        return "faculties";
+    public String getFaculties(@RequestParam(defaultValue = "1") int page, // Sahifa raqami
+                             @RequestParam(defaultValue = "5") int size, // Har sahifadagi yozuvlar soni
+                             Model model) {
+
+        // Ma'lumotlar ro'yxatini olish
+        List<Faculty> faculties = facultyService.getAllFaculties(page, size);
+
+        // Umumiy yozuvlar sonini olish
+        int totalFaculties = facultyService.getTotalFaculties();
+
+        // Umumiy sahifalar sonini hisoblash
+        int totalPages = (int) Math.ceil((double) totalFaculties / size);
+
+        // Modelga ma'lumotlarni qo'shish
+        model.addAttribute("faculties", faculties);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", totalPages);
+        model.addAttribute("pageSize", size);
+
+        return "faculties"; // faculties.html sahifasiga yo'naltiramiz
     }
 
     @GetMapping("/faculties/new")

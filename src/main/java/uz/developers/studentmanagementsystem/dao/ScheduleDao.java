@@ -125,7 +125,7 @@ public class ScheduleDao {
 
     //read
 
-    public List<Schedule> getSchedules() {
+    public List<Schedule> getSchedules(int page, int size) {
         List<Schedule> schedules = new ArrayList<>();
         try {
             String selectQuery = "select sc.id, s.name as subjectName, t.firstname, t.lastname  , \n" +
@@ -133,8 +133,10 @@ public class ScheduleDao {
                     "                   sc.start_time, sc.end_time from schedule sc \n" +
                     "\t\t\t\t   inner join subject s on sc.subject_id = s.id\n" +
                     "\t\t\t\t   inner join teacher t on sc.teacher_id = t.id\n" +
-                    "\t\t\t\t   inner join classroom c on sc.classroom_id = c.id;";
+                    "\t\t\t\t   inner join classroom c on sc.classroom_id = c.id limit ? offset ?;";
             preparedStatement = this.connection.prepareStatement(selectQuery);
+            preparedStatement.setInt(1,size);
+            preparedStatement.setInt(2, (page - 1) * size);
             resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
                 long id = resultSet.getLong("id");
@@ -155,6 +157,24 @@ public class ScheduleDao {
             e.printStackTrace();
         }
         return schedules;
+    }
+
+    //find pages for pagination
+    public int getTotalSchedules() {
+        int totalSchedules = 0;
+        try {
+            String countQuery = "select count(*) from schedule;";
+
+            preparedStatement = this.connection.prepareStatement(countQuery);
+            resultSet = preparedStatement.executeQuery();
+
+            if (resultSet.next()) {
+                totalSchedules = resultSet.getInt(1); // Umumiy yozuvlar soni
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return totalSchedules;
     }
 
     //read/{id}

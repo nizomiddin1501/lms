@@ -9,7 +9,9 @@ import java.util.List;
 public interface ClassroomService {
 
 
-    List<Classroom> getAllClassrooms();
+    List<Classroom> getAllClassrooms(int size, int page);
+
+    int getTotalClassrooms();
 
     Classroom getClassroomById(Long id);
 

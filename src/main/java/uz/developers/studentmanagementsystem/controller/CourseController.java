@@ -6,6 +6,8 @@ import org.springframework.web.bind.annotation.*;
 import uz.developers.studentmanagementsystem.entity.Course;
 import uz.developers.studentmanagementsystem.service.CourseService;
 
+import java.util.List;
+
 
 @Controller
 public class CourseController {
@@ -19,10 +21,29 @@ public class CourseController {
 
 
     @GetMapping("/courses")
-    public String getCourses(Model model) {
-        model.addAttribute("courses", courseService.getAllCourses());
-        return "courses";
+    public String getCourses(@RequestParam(defaultValue = "1") int page, // Sahifa raqami
+                                @RequestParam(defaultValue = "5") int size, // Har sahifadagi yozuvlar soni
+                                Model model) {
+
+        // Ma'lumotlar ro'yxatini olish
+        List<Course> courses = courseService.getAllCourses(page, size);
+
+        // Umumiy yozuvlar sonini olish
+        int totalCourses = courseService.getTotalCourses();
+
+        // Umumiy sahifalar sonini hisoblash
+        int totalPages = (int) Math.ceil((double) totalCourses / size);
+
+        // Modelga ma'lumotlarni qo'shish
+        model.addAttribute("courses", courses);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", totalPages);
+        model.addAttribute("pageSize", size);
+
+        return "courses"; // courses.html sahifasiga yo'naltiramiz
     }
+
+
 
     @GetMapping("/courses/new")
     public String createCourseForm(Model model) {

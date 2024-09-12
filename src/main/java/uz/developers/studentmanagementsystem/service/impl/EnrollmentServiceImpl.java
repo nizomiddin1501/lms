@@ -19,9 +19,10 @@ public class EnrollmentServiceImpl implements EnrollmentService {
     }
 
 
+
     @Override
-    public List<Enrollment> getAllEnrollments() {
-        return null;
+    public int getTotalEnrollments() {
+        return enrollmentDao.getTotalEnrollments();
     }
 
     @Override

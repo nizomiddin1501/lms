@@ -9,7 +9,9 @@ import java.util.List;
 public interface SubjectService {
 
 
-    List<Subject> getAllSubjects();
+    List<Subject> getAllSubjects(int pageNumber, int pageSize);
+
+    int getTotalSubjects();
 
     Subject getSubjectById(Long id);
 
